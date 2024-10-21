@@ -1,6 +1,8 @@
 package math
 
 import (
+	"bytes"
+	"encoding/binary"
 	"math/big"
 
 	"github.com/cockroachdb/apd/v3"
@@ -30,7 +32,7 @@ const mathCodespace = "math"
 var (
 	ErrInvalidDec         = errors.Register(mathCodespace, 1, "invalid decimal string")
 	ErrUnexpectedRounding = errors.Register(mathCodespace, 2, "unexpected rounding")
-	ErrNonIntegeral       = errors.Register(mathCodespace, 3, "value is non-integral")
+	ErrNonIntegral        = errors.Register(mathCodespace, 3, "value is non-integral")
 )
 
 // In cosmos-sdk#7773, decimal128 (with 34 digits of precision) was suggested for performing
@@ -285,7 +287,7 @@ func (x Dec) BigInt() (*big.Int, error) {
 	z := &big.Int{}
 	z, ok := z.SetString(y.String(), 10)
 	if !ok {
-		return nil, ErrNonIntegeral
+		return nil, ErrNonIntegral
 	}
 	return z, nil
 }
@@ -383,21 +385,35 @@ func (x Dec) Reduce() (Dec, int) {
 //   - An error if the decimal cannot be reduced or marshaled properly.
 func (x Dec) Marshal() ([]byte, error) {
 	d, _ := x.Reduce()
-	return []byte(d.dec.Text('E')), nil
+	var buf bytes.Buffer
+	if d.dec.Negative {
+		buf.WriteByte('-')
+	} else {
+		buf.WriteByte('+')
+	}
+	expBz := binary.BigEndian.AppendUint32([]byte{}, uint32(d.dec.Exponent))
+	buf.Write(expBz)
+	coeff := d.dec.Coeff.MathBigInt()
+	if d.dec.Negative {
+		coeff = coeff.Neg(coeff)
+	}
+	buf.Write(coeff.Bytes())
+	return buf.Bytes(), nil
 }
 
 // Unmarshal parses a byte slice containing a text-formatted decimal and stores the result in the receiver.
 // It returns an error if the byte slice does not represent a valid decimal.
 func (x *Dec) Unmarshal(data []byte) error {
-	result, err := NewDecFromString(string(data))
-	if err != nil {
-		return ErrInvalidDec.Wrap(err.Error())
+	coeffNeg := data[0] == '-'
+	exp := binary.BigEndian.Uint32(data[1:5])
+	coeff := new(apd.BigInt).SetBytes(data[5:])
+	d := apd.NewWithBigInt(coeff, int32(exp))
+	if coeffNeg {
+		d.Neg(d)
 	}
-
-	if result.dec.Form != apd.Finite {
+	if d.Form != apd.Finite {
 		return ErrInvalidDec.Wrap("unknown decimal form")
 	}
-
-	x.dec = result.dec
+	x.dec = *d
 	return nil
 }
