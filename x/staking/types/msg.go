@@ -69,13 +69,6 @@ func (msg MsgCreateValidator) GetSigners() []sdk.AccAddress {
 	// delegator is first signer so delegator pays fees
 	delegator, _ := sdk.AccAddressFromBech32(msg.DelegatorAddress)
 	addrs := []sdk.AccAddress{delegator}
-	valAddr, _ := sdk.ValAddressFromBech32(msg.ValidatorAddress)
-
-	valAccAddr := sdk.AccAddress(valAddr)
-	if !delegator.Equals(valAccAddr) {
-		addrs = append(addrs, valAccAddr)
-	}
-
 	return addrs
 }
 
@@ -160,8 +153,8 @@ func (msg MsgEditValidator) Type() string { return TypeMsgEditValidator }
 
 // GetSigners implements the sdk.Msg interface.
 func (msg MsgEditValidator) GetSigners() []sdk.AccAddress {
-	valAddr, _ := sdk.ValAddressFromBech32(msg.ValidatorAddress)
-	return []sdk.AccAddress{sdk.AccAddress(valAddr)}
+	addr, _ := sdk.AccAddressFromBech32(msg.DaoAddress)
+	return []sdk.AccAddress{sdk.AccAddress(addr)}
 }
 
 // GetSignBytes implements the sdk.Msg interface.

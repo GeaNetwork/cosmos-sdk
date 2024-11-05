@@ -752,8 +752,8 @@ func (k Keeper) Unbond(
 	// self-delegation below their minimum, we jail the validator.
 	if isValidatorOperator && !validator.Jailed &&
 		validator.TokensFromShares(delegation.Shares).TruncateInt().LT(validator.MinSelfDelegation) {
-		k.jailValidator(ctx, validator)
-		validator = k.mustGetValidator(ctx, validator.GetOperator())
+		k.JailValidator(ctx, validator)
+		validator = k.MustGetValidator(ctx, validator.GetOperator())
 	}
 
 	if delegation.Shares.IsZero() {

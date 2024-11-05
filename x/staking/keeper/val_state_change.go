@@ -130,7 +130,7 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []ab
 		// everything that is iterated in this loop is becoming or already a
 		// part of the bonded validator set
 		valAddr := sdk.ValAddress(iterator.Value())
-		validator := k.mustGetValidator(ctx, valAddr)
+		validator := k.MustGetValidator(ctx, valAddr)
 
 		if validator.Jailed {
 			panic("should never retrieve a jailed validator from the power store")
@@ -190,7 +190,7 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []ab
 	}
 
 	for _, valAddrBytes := range noLongerBonded {
-		validator := k.mustGetValidator(ctx, sdk.ValAddress(valAddrBytes))
+		validator := k.MustGetValidator(ctx, sdk.ValAddress(valAddrBytes))
 		validator, err = k.bondedToUnbonding(ctx, validator)
 		if err != nil {
 			return
@@ -209,9 +209,9 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []ab
 	// Compare and subtract the respective amounts to only perform one transfer.
 	// This is done in order to avoid doing multiple updates inside each iterator/loop.
 	case amtFromNotBondedToBonded.GT(amtFromBondedToNotBonded):
-		k.notBondedTokensToBonded(ctx, amtFromNotBondedToBonded.Sub(amtFromBondedToNotBonded))
+		//k.notBondedTokensToBonded(ctx, amtFromNotBondedToBonded.Sub(amtFromBondedToNotBonded))
 	case amtFromNotBondedToBonded.LT(amtFromBondedToNotBonded):
-		k.bondedTokensToNotBonded(ctx, amtFromBondedToNotBonded.Sub(amtFromNotBondedToBonded))
+		//k.bondedTokensToNotBonded(ctx, amtFromBondedToNotBonded.Sub(amtFromNotBondedToBonded))
 	default: // equal amounts of tokens; no update required
 	}
 
@@ -262,7 +262,7 @@ func (k Keeper) UnbondingToUnbonded(ctx sdk.Context, validator types.Validator) 
 }
 
 // send a validator to jail
-func (k Keeper) jailValidator(ctx sdk.Context, validator types.Validator) {
+func (k Keeper) JailValidator(ctx sdk.Context, validator types.Validator) {
 	if validator.Jailed {
 		panic(fmt.Sprintf("cannot jail already jailed validator, validator: %v\n", validator))
 	}

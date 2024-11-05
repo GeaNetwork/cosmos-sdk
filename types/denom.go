@@ -10,10 +10,19 @@ var denomUnits = map[string]Dec{}
 
 // baseDenom is the denom of smallest unit registered
 var baseDenom string
+var baseDenoms = map[string]string{}
 
 // RegisterDenom registers a denomination with a corresponding unit. If the
 // denomination is already registered, an error will be returned.
 func RegisterDenom(denom string, unit Dec) error {
+	if err := ValidateDenom(denom); err != nil {
+		return err
+	}
+	baseDenom = denom
+	return nil
+}
+
+func RegisterDenoms(denom string, unit Dec) error {
 	if err := ValidateDenom(denom); err != nil {
 		return err
 	}
@@ -23,10 +32,7 @@ func RegisterDenom(denom string, unit Dec) error {
 	}
 
 	denomUnits[denom] = unit
-
-	if baseDenom == "" || unit.LT(denomUnits[baseDenom]) {
-		baseDenom = denom
-	}
+	baseDenoms[denom] = denom
 	return nil
 }
 
@@ -51,6 +57,13 @@ func GetBaseDenom() (string, error) {
 		return "", fmt.Errorf("no denom is registered")
 	}
 	return baseDenom, nil
+}
+
+func GetBaseDenoms(denom string) (string, error) {
+	if baseDenoms[denom] == "" {
+		return "", fmt.Errorf("no denom is registered")
+	}
+	return baseDenoms[denom], nil
 }
 
 // ConvertCoin attempts to convert a coin to a given denomination. If the given
@@ -106,7 +119,7 @@ func ConvertDecCoin(coin DecCoin, denom string) (DecCoin, error) {
 // NormalizeCoin try to convert a coin to the smallest unit registered,
 // returns original one if failed.
 func NormalizeCoin(coin Coin) Coin {
-	base, err := GetBaseDenom()
+	base, err := GetBaseDenoms(coin.Denom)
 	if err != nil {
 		return coin
 	}
@@ -120,7 +133,7 @@ func NormalizeCoin(coin Coin) Coin {
 // NormalizeDecCoin try to convert a decimal coin to the smallest unit registered,
 // returns original one if failed.
 func NormalizeDecCoin(coin DecCoin) DecCoin {
-	base, err := GetBaseDenom()
+	base, err := GetBaseDenoms(coin.Denom)
 	if err != nil {
 		return coin
 	}

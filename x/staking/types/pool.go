@@ -10,8 +10,10 @@ import (
 //
 // - BondedPool -> "bonded_tokens_pool"
 const (
-	NotBondedPoolName = "not_bonded_tokens_pool"
-	BondedPoolName    = "bonded_tokens_pool"
+	NotBondedPoolName      = "not_bonded_tokens_pool"
+	BondedPoolName         = "bonded_tokens_pool"
+	NotBondedStakePoolName = "not_bonded_stake_tokens_pool"
+	BondedStakePoolName    = "bonded_stake_tokens_pool"
 )
 
 // NewPool creates a new Pool instance used for queries
