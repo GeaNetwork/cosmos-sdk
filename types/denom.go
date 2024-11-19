@@ -22,7 +22,7 @@ func RegisterDenom(denom string, unit Dec) error {
 	return nil
 }
 
-func RegisterDenoms(denom string, unit Dec) error {
+func RegisterDenoms(denom string, unit Dec, bDenom string, bUnit Dec) error {
 	if err := ValidateDenom(denom); err != nil {
 		return err
 	}
@@ -32,7 +32,9 @@ func RegisterDenoms(denom string, unit Dec) error {
 	}
 
 	denomUnits[denom] = unit
-	baseDenoms[denom] = denom
+	denomUnits[bDenom] = bUnit
+	baseDenoms[denom] = bDenom
+	baseDenoms[bDenom] = bDenom
 	return nil
 }
 
