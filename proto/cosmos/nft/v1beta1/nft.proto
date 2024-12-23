@@ -27,6 +27,8 @@ message Class {
 
   // data is the app specific metadata of the NFT class. Optional
   google.protobuf.Any data = 7;
+
+  uint64  total_supply = 8;
 }
 
 // NFT defines the NFT.
