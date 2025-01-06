@@ -312,7 +312,7 @@ func (k Keeper) bondValidator(ctx sdk.Context, validator types.Validator) (types
 
 // BeginUnbondingValidator performs all the store operations for when a validator begins unbonding
 func (k Keeper) BeginUnbondingValidator(ctx sdk.Context, validator types.Validator) (types.Validator, error) {
-	params := k.GetParams(ctx)
+	//params := k.GetParams(ctx)
 
 	// delete the validator by power index, as the key will change
 	k.DeleteValidatorByPowerIndex(ctx, validator)
@@ -327,7 +327,7 @@ func (k Keeper) BeginUnbondingValidator(ctx sdk.Context, validator types.Validat
 	validator = validator.UpdateStatus(types.Unbonding)
 
 	// set the unbonding completion time and completion height appropriately
-	validator.UnbondingTime = ctx.BlockHeader().Time.Add(params.UnbondingTime)
+	validator.UnbondingTime = ctx.BlockHeader().Time
 	validator.UnbondingHeight = ctx.BlockHeader().Height
 
 	validator.UnbondingIds = append(validator.UnbondingIds, id)
