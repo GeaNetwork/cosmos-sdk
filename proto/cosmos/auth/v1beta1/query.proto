@@ -75,9 +75,9 @@ service Query {
   // AddressStringToBytes converts Address string to bytes
   //
   // Since: cosmos-sdk 0.46
-  rpc AddressStringToBytes(AddressStringToBytesRequest) returns (AddressStringToBytesResponse) {
-    option (google.api.http).get = "/cosmos/auth/v1beta1/bech32/{address_string}";
-  }
+//  rpc AddressStringToBytes(AddressStringToBytesRequest) returns (AddressStringToBytesResponse) {
+//    option (google.api.http).get = "/cosmos/auth/v1beta1/bech32/{address_string}";
+//  }
 
   // AccountInfo queries account info which is common to all account types.
   //

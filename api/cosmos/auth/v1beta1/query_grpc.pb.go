@@ -27,7 +27,6 @@ const (
 	Query_ModuleAccountByName_FullMethodName  = "/cosmos.auth.v1beta1.Query/ModuleAccountByName"
 	Query_Bech32Prefix_FullMethodName         = "/cosmos.auth.v1beta1.Query/Bech32Prefix"
 	Query_AddressBytesToString_FullMethodName = "/cosmos.auth.v1beta1.Query/AddressBytesToString"
-	Query_AddressStringToBytes_FullMethodName = "/cosmos.auth.v1beta1.Query/AddressStringToBytes"
 	Query_AccountInfo_FullMethodName          = "/cosmos.auth.v1beta1.Query/AccountInfo"
 )
 
@@ -66,10 +65,6 @@ type QueryClient interface {
 	//
 	// Since: cosmos-sdk 0.46
 	AddressBytesToString(ctx context.Context, in *AddressBytesToStringRequest, opts ...grpc.CallOption) (*AddressBytesToStringResponse, error)
-	// AddressStringToBytes converts Address string to bytes
-	//
-	// Since: cosmos-sdk 0.46
-	AddressStringToBytes(ctx context.Context, in *AddressStringToBytesRequest, opts ...grpc.CallOption) (*AddressStringToBytesResponse, error)
 	// AccountInfo queries account info which is common to all account types.
 	//
 	// Since: cosmos-sdk 0.47
@@ -164,16 +159,6 @@ func (c *queryClient) AddressBytesToString(ctx context.Context, in *AddressBytes
 	return out, nil
 }
 
-func (c *queryClient) AddressStringToBytes(ctx context.Context, in *AddressStringToBytesRequest, opts ...grpc.CallOption) (*AddressStringToBytesResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AddressStringToBytesResponse)
-	err := c.cc.Invoke(ctx, Query_AddressStringToBytes_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *queryClient) AccountInfo(ctx context.Context, in *QueryAccountInfoRequest, opts ...grpc.CallOption) (*QueryAccountInfoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(QueryAccountInfoResponse)
@@ -219,10 +204,6 @@ type QueryServer interface {
 	//
 	// Since: cosmos-sdk 0.46
 	AddressBytesToString(context.Context, *AddressBytesToStringRequest) (*AddressBytesToStringResponse, error)
-	// AddressStringToBytes converts Address string to bytes
-	//
-	// Since: cosmos-sdk 0.46
-	AddressStringToBytes(context.Context, *AddressStringToBytesRequest) (*AddressStringToBytesResponse, error)
 	// AccountInfo queries account info which is common to all account types.
 	//
 	// Since: cosmos-sdk 0.47
@@ -260,9 +241,6 @@ func (UnimplementedQueryServer) Bech32Prefix(context.Context, *Bech32PrefixReque
 }
 func (UnimplementedQueryServer) AddressBytesToString(context.Context, *AddressBytesToStringRequest) (*AddressBytesToStringResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddressBytesToString not implemented")
-}
-func (UnimplementedQueryServer) AddressStringToBytes(context.Context, *AddressStringToBytesRequest) (*AddressStringToBytesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddressStringToBytes not implemented")
 }
 func (UnimplementedQueryServer) AccountInfo(context.Context, *QueryAccountInfoRequest) (*QueryAccountInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AccountInfo not implemented")
@@ -432,24 +410,6 @@ func _Query_AddressBytesToString_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_AddressStringToBytes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddressStringToBytesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).AddressStringToBytes(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Query_AddressStringToBytes_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).AddressStringToBytes(ctx, req.(*AddressStringToBytesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Query_AccountInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryAccountInfoRequest)
 	if err := dec(in); err != nil {
@@ -506,10 +466,6 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddressBytesToString",
 			Handler:    _Query_AddressBytesToString_Handler,
-		},
-		{
-			MethodName: "AddressStringToBytes",
-			Handler:    _Query_AddressStringToBytes_Handler,
 		},
 		{
 			MethodName: "AccountInfo",
