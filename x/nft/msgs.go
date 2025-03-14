@@ -41,3 +41,15 @@ func (m MsgSend) GetSigners() []sdk.AccAddress {
 	signer, _ := sdk.AccAddressFromBech32(m.Sender)
 	return []sdk.AccAddress{signer}
 }
+
+// GetSignBytes get the bytes for the message signer to sign on
+func (msg MsgSend) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(&msg)
+	return sdk.MustSortJSON(bz)
+}
+
+// Route implements the LegacyMsg interface.
+func (msg MsgSend) Route() string { return ModuleName }
+
+// Type implements the sdk.Msg interface.
+func (msg MsgSend) Type() string { return sdk.MsgTypeURL(&msg) }

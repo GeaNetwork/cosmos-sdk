@@ -32,6 +32,6 @@ cd ..
 cp -r github.com/cosmos/cosmos-sdk/* ./
 rm -rf github.com
 
-go mod tidy
+#go mod tidy
 
 ./scripts/protocgen-pulsar.sh
