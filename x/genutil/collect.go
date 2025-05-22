@@ -11,6 +11,7 @@ import (
 	"runtime"
 	"sort"
 	"strings"
+	"time"
 
 	cfg "github.com/cometbft/cometbft/config"
 	tmtypes "github.com/cometbft/cometbft/types"
@@ -78,10 +79,38 @@ func CollectTxs(cdc codec.JSONCodec, txJSONDecoder sdk.TxDecoder, moniker, genTx
 		return appGenTxs, persistentPeers, err
 	}
 
-	var fos []os.DirEntry
-	fos, err = os.ReadDir(genTxsDir)
+	entries, err := os.ReadDir(genTxsDir)
 	if err != nil {
 		return appGenTxs, persistentPeers, err
+	}
+
+	// Create a slice to hold file info
+	type fileInfo struct {
+		entry   os.DirEntry
+		modTime time.Time
+	}
+
+	var files []fileInfo
+
+	// Collect file info with modification time
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		info, err := entry.Info()
+		if err != nil {
+			return appGenTxs, persistentPeers, fmt.Errorf("error getting file info: %v", err)
+		}
+		files = append(files, fileInfo{entry: entry, modTime: info.ModTime()})
+	}
+
+	sort.Slice(files, func(i, j int) bool {
+		return files[i].modTime.Before(files[j].modTime)
+	})
+
+	var fos []os.DirEntry
+	for _, file := range files {
+		fos = append(fos, file.entry)
 	}
 
 	balancesMap := make(map[string]bankexported.GenesisBalance)
