@@ -6,7 +6,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/cosmos/cosmos-sdk/x/evidence/types"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 // HandleEquivocationEvidence implements an equivocation evidence handler. Assuming the
@@ -102,19 +101,19 @@ func (k Keeper) HandleEquivocationEvidence(ctx sdk.Context, evidence *types.Equi
 	// -ValidatorUpdateDelay, i.e. at the end of the
 	// pre-genesis block (none) = at the beginning of the genesis block.
 	// That's fine since this is just used to filter unbonding delegations & redelegations.
-	distributionHeight := infractionHeight - sdk.ValidatorUpdateDelay
+	//distributionHeight := infractionHeight - sdk.ValidatorUpdateDelay
 
 	// Slash validator. The `power` is the int64 power of the validator as provided
 	// to/by Tendermint. This value is validator.Tokens as sent to Tendermint via
 	// ABCI, and now received as evidence. The fraction is passed in to separately
 	// to slash unbonding and rebonding delegations.
-	k.slashingKeeper.SlashWithInfractionReason(
-		ctx,
-		consAddr,
-		k.slashingKeeper.SlashFractionDoubleSign(ctx),
-		evidence.GetValidatorPower(), distributionHeight,
-		stakingtypes.Infraction_INFRACTION_DOUBLE_SIGN,
-	)
+	//k.slashingKeeper.SlashWithInfractionReason(
+	//	ctx,
+	//	consAddr,
+	//	k.slashingKeeper.SlashFractionDoubleSign(ctx),
+	//	evidence.GetValidatorPower(), distributionHeight,
+	//	stakingtypes.Infraction_INFRACTION_DOUBLE_SIGN,
+	//)
 
 	// Jail the validator if not already jailed. This will begin unbonding the
 	// validator if not already unbonding (tombstoned).
