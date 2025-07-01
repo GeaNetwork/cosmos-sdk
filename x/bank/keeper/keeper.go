@@ -420,7 +420,7 @@ func (k BaseKeeper) MintCoins(ctx sdk.Context, moduleName string, amounts sdk.Co
 	for _, amount := range amounts {
 		supply := k.GetSupply(ctx, amount.GetDenom())
 		supply = supply.Add(amount)
-		k.setSupply(ctx, supply)
+		k.SetSupply(ctx, supply)
 	}
 
 	logger := k.Logger(ctx)
@@ -454,7 +454,7 @@ func (k BaseKeeper) BurnCoins(ctx sdk.Context, moduleName string, amounts sdk.Co
 	for _, amount := range amounts {
 		supply := k.GetSupply(ctx, amount.GetDenom())
 		supply = supply.Sub(amount)
-		k.setSupply(ctx, supply)
+		k.SetSupply(ctx, supply)
 	}
 
 	logger := k.Logger(ctx)
@@ -469,7 +469,7 @@ func (k BaseKeeper) BurnCoins(ctx sdk.Context, moduleName string, amounts sdk.Co
 }
 
 // setSupply sets the supply for the given coin
-func (k BaseKeeper) setSupply(ctx sdk.Context, coin sdk.Coin) {
+func (k BaseKeeper) SetSupply(ctx sdk.Context, coin sdk.Coin) {
 	intBytes, err := coin.Amount.Marshal()
 	if err != nil {
 		panic(fmt.Errorf("unable to marshal amount value %v", err))

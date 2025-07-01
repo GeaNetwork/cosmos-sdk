@@ -297,7 +297,7 @@ func (k BaseSendKeeper) addCoins(ctx sdk.Context, addr sdk.AccAddress, amt sdk.C
 
 // initBalances sets the balance (multiple coins) for an account by address.
 // An error is returned upon failure.
-func (k BaseSendKeeper) initBalances(ctx sdk.Context, addr sdk.AccAddress, balances sdk.Coins) error {
+func (k BaseSendKeeper) InitBalances(ctx sdk.Context, addr sdk.AccAddress, balances sdk.Coins) error {
 	accountStore := k.getAccountStore(ctx, addr)
 	denomPrefixStores := make(map[string]prefix.Store) // memoize prefix stores
 
